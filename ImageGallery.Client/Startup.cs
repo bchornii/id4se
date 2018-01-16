@@ -35,7 +35,7 @@ namespace ImageGallery.Client
                     options.AccessDeniedPath = "/Authorization/AccessDenied";
                 })                        
                 .AddOpenIdConnect("oidc", options =>
-                {
+                {                    
                     options.SignInScheme = "Cookie";       // scheme responsible for persistance 
                                                            // user identity after successful auth at IDP
 
@@ -60,6 +60,7 @@ namespace ImageGallery.Client
                     options.Scope.Add("profile");
                     options.Scope.Add("address");
                     options.Scope.Add("roles");                    
+                    options.Scope.Add("imagegalleryapi");                    
 
                     options.Events = new OpenIdConnectEvents
                     {

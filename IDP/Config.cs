@@ -14,7 +14,7 @@ namespace IDP
             {
                 new TestUser
                 {
-                    SubjectId = "1",        // must be unique at the level of IDP
+                    SubjectId = "d860efca-22d9-47fd-8249-791ba61b07c7",        // must be unique at the level of IDP
                     Username = "Frank",
                     Password = "password",
 
@@ -29,7 +29,7 @@ namespace IDP
 
                 new TestUser
                 {
-                    SubjectId = "2",
+                    SubjectId = "b7539694-97e7-4dfe-84da-b4256e1ff5c7",
                     Username = "Claire",
                     Password = "password",
 
@@ -58,6 +58,17 @@ namespace IDP
             };
         }
 
+        public static IEnumerable<ApiResource> GetApiResources()
+        {
+            return new List<ApiResource>
+            {
+                new ApiResource("imagegalleryapi", "Image Gallery API",
+                    new List<string>{"role"})   // add list of claims included when requesting 
+                                                // imagegalleryapi scope
+                                                // claims will be included in access_token
+            };
+        }
+
         public static IEnumerable<Client> GetClients()
         {
             return new List<Client>
@@ -82,7 +93,8 @@ namespace IDP
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Address,
-                        "roles"
+                        "roles",
+                        "imagegalleryapi"
                     }
                 }
             };

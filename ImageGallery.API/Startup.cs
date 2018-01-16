@@ -27,6 +27,15 @@ namespace ImageGallery.API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication("Bearer")
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = "https://localhost:44332/";
+                    options.RequireHttpsMetadata = true;
+                    options.ApiName = "imagegalleryapi";    // middleware check for this value
+                                                            // in access_token
+                });
+
             services.AddMvc();
 
             // register the DbContext on the container, getting the connection string from
@@ -91,6 +100,8 @@ namespace ImageGallery.API
 
             // seed the DB with data
             galleryContext.EnsureSeedDataForContext();
+
+            app.UseAuthentication();
 
             app.UseMvc();
         }

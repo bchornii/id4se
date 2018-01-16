@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using ImageGallery.Model;
 using System.Net.Http;
 using System.IO;
+using System.Net;
 using System.Net.Http.Headers;
 using ImageGallery.Client.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -70,7 +71,14 @@ namespace ImageGallery.Client.Controllers
                 
                 return View(editImageViewModel);
             }
-           
+
+            // TODO: needs to find better way
+            if (response.StatusCode == HttpStatusCode.Forbidden ||
+               response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return RedirectToAction("AccessDenied", "Authorization");
+            }
+
             throw new Exception($"A problem happened while calling the API: {response.ReasonPhrase}");
         }
 
@@ -117,16 +125,25 @@ namespace ImageGallery.Client.Controllers
             {
                 return RedirectToAction("Index");
             }
-       
+
+            // TODO: needs to find better way
+            if (response.StatusCode == HttpStatusCode.Forbidden ||
+                response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return RedirectToAction("AccessDenied", "Authorization");
+            }
+
             throw new Exception($"A problem happened while calling the API: {response.ReasonPhrase}");
         }
         
+        [Authorize(Roles = "PayingUser")]
         public IActionResult AddImage()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "PayingUser")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddImage(AddImageViewModel addImageViewModel)
         {   

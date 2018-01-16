@@ -14,7 +14,8 @@ namespace IDP
                 .AddDeveloperSigningCredential() // creates temp creds for sign JWT token
                 .AddTestUsers(Config.GetUsers())
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
-                .AddInMemoryClients(Config.GetClients());
+                .AddInMemoryClients(Config.GetClients())
+                .AddInMemoryApiResources(Config.GetApiResources());
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
