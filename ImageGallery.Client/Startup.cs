@@ -49,7 +49,7 @@ namespace ImageGallery.Client
                     options.SaveTokens = true;              // allows middleware to save tokens
 
                     options.GetClaimsFromUserInfoEndpoint = true;  // middleware will call /userinfo endpoint to get additional
-                                                                   // information about user
+                                                                   // information about user after id_token is received and validated
                     
                     // add claims from json user data received from /useinfo endpoint
                     options.ClaimActions.Add(new RoleClaimAction());
@@ -78,7 +78,7 @@ namespace ImageGallery.Client
                                 "given_name", "role");
                             var principal = new ClaimsPrincipal(claimsIdentity);
 
-                            // Reinitialize ticket with custom one
+                            // Reinitialize request Principal with custom one
                             tokenValidatedContext.Principal = principal;
 
                             return Task.CompletedTask;   
