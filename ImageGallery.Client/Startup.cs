@@ -1,14 +1,12 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using ImageGallery.Client.Services;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ImageGallery.Client
 {
@@ -24,76 +22,90 @@ namespace ImageGallery.Client
 
             services.AddAuthentication(options =>
                 {
-                    options.DefaultScheme = "Cookie";        // using a cookie as the primary means 
-                                                             // to authenticate a user
+                    options.DefaultScheme = "Cookie"; // using a cookie as the primary means 
+                    // to authenticate a user
 
                     options.DefaultChallengeScheme = "oidc"; // when we need the user to login, 
-                                                             // we will be using the OpenID Connect scheme                                                                                 
+                    // we will be using the OpenID Connect scheme                                                                                 
                 })
                 .AddCookie("Cookie", options =>
-                {                    
+                {
                     options.AccessDeniedPath = "/Authorization/AccessDenied";
-                })                        
+                })
                 .AddOpenIdConnect("oidc", options =>
-                {                    
-                    options.SignInScheme = "Cookie";       // scheme responsible for persistance 
-                                                           // user identity after successful auth at IDP
+                {
+                    options.SignInScheme = "Cookie"; // scheme responsible for persistance 
+                                                     // user identity after successful auth at IDP
 
                     options.Authority = "https://localhost:44332/";
                     options.RequireHttpsMetadata = true;
 
                     options.ClientId = "imagegalleryclient";
-                    options.ClientSecret = "secret";        // secret should match to ID server value
+                    options.ClientSecret = "secret"; // secret should match to ID server value
                     options.ResponseType = "code id_token"; // means “use hybrid flow”
 
-                    options.SaveTokens = true;              // allows middleware to save tokens
+                    options.SaveTokens = true; // allows middleware to save tokens
 
-                    options.GetClaimsFromUserInfoEndpoint = true;  // middleware will call /userinfo endpoint to get additional
-                                                                   // information about user after id_token is received and validated
-                    
-                    // add claims from json user data received from /useinfo endpoint
-                    options.ClaimActions.Add(new RoleClaimAction());
-                    // defines string for role claim type
-                    options.TokenValidationParameters.RoleClaimType = "role";
+                    options.GetClaimsFromUserInfoEndpoint = true; // middleware will call /userinfo endpoint to get additional
+                                                                  // information about user after id_token is received and validated                   
 
+                    // openid and profile is added by default, so better to clean up
+                    options.Scope.Clear();
+
+                    // add scopes we want to have access to
                     options.Scope.Add("openid");
                     options.Scope.Add("profile");
                     options.Scope.Add("address");
-                    options.Scope.Add("roles");                    
-                    options.Scope.Add("imagegalleryapi");                    
+                    options.Scope.Add("roles");
+                    options.Scope.Add("imagegalleryapi");
+
+                    // add claims from json user data received from /useinfo endpoint
+                    options.ClaimActions.Add(new RoleClaimAction());
+                    // defines string for role claim type
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        RoleClaimType = "role"                        
+                    };
 
                     options.Events = new OpenIdConnectEvents
                     {
+                        // Trigered when identity token is validated
                         OnTokenValidated = tokenValidatedContext =>
                         {
-                            var identity = tokenValidatedContext
-                                .Principal.Identity as ClaimsIdentity;
+                            // Code only valid for Asp.Net Core v1.x because
+                            // in Asp.Net Core v2.x a lot of unused claims are deleted by default
 
-                            var subClaim = identity?.Claims
-                                .Where(c => c.Type == "sub");
+                            //var identity = tokenValidatedContext
+                            //    .Principal.Identity as ClaimsIdentity;
+                            //
+                            //var subClaim = identity?.Claims
+                            //    .Where(c => c.Type == "sub");
+                            //
+                            //// Create new claims identity and add sub claim
+                            //var claimsIdentity = new ClaimsIdentity(
+                            //    subClaim,
+                            //    tokenValidatedContext.Scheme.DisplayName,
+                            //    "given_name", "role");
+                            //var principal = new ClaimsPrincipal(claimsIdentity);
+                            //
+                            //// Reinitialize request Principal with custom one
+                            //tokenValidatedContext.Principal = principal;
 
-                            // Create new claims identity and add sub claim
-                            var claimsIdentity = new ClaimsIdentity(
-                                subClaim,
-                                tokenValidatedContext.Scheme.DisplayName,
-                                "given_name", "role");
-                            var principal = new ClaimsPrincipal(claimsIdentity);
-
-                            // Reinitialize request Principal with custom one
-                            tokenValidatedContext.Principal = principal;
-
-                            return Task.CompletedTask;   
+                            return Task.CompletedTask;
                         },
 
                         // Trigered when claims received from userinfo endpoint
                         OnUserInformationReceived = userInfoReceivedContext =>
                         {
+                            // Code only valid for Asp.Net Core v1.x because
+                            // in Asp.Net Core v2.x a lot of unused claims are deleted by default
+
                             // Remove address claim
-                            userInfoReceivedContext.User.Remove("address");
+                            //userInfoReceivedContext.User.Remove("address");
                             return Task.CompletedTask;
                         }
                     };
-                });
+                });                
 
             // register an IHttpContextAccessor so we can access the current
             // HttpContext in services by injecting it

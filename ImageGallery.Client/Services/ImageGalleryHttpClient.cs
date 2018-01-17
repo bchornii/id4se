@@ -23,6 +23,9 @@ namespace ImageGallery.Client.Services
             var accessToken = await _httpContextAccessor.HttpContext
                 .GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
 
+            var idToken = await _httpContextAccessor.HttpContext
+                .GetTokenAsync(OpenIdConnectParameterNames.IdToken);
+
             if (!string.IsNullOrWhiteSpace(accessToken))
             {
                 _httpClient.SetBearerToken(accessToken);
