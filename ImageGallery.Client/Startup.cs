@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using ImageGallery.Client.Services;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -16,6 +17,17 @@ namespace ImageGallery.Client
         {
             // Add framework services.
             services.AddMvc();
+
+            // Authorization
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("CanOrderFrame", policyBuilder =>
+                {                    
+                    policyBuilder.RequireAuthenticatedUser();
+                    policyBuilder.RequireClaim("subscriptionlevel", "PayingUser");
+                    policyBuilder.RequireClaim("country", "be");
+                });
+            });
 
             // Disables mapping btw claim types from IDP and client claim types
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -57,10 +69,15 @@ namespace ImageGallery.Client
                     options.Scope.Add("profile");
                     options.Scope.Add("address");
                     options.Scope.Add("roles");
-                    options.Scope.Add("imagegalleryapi");
+                    options.Scope.Add("imagegalleryapi");                   
+                    options.Scope.Add("subscriptionlevel");  // will be returned from /userinfo
+                    options.Scope.Add("country");           // will be returned from /userinfo
 
                     // add claims from json user data received from /useinfo endpoint
-                    options.ClaimActions.Add(new RoleClaimAction());
+                    options.ClaimActions.Add(new CustomClaimAction("role", ClaimValueTypes.String));
+                    options.ClaimActions.Add(new CustomClaimAction("country", ClaimValueTypes.String));
+                    options.ClaimActions.Add(new CustomClaimAction("subscriptionlevel", ClaimValueTypes.String));
+
                     // defines string for role claim type
                     options.TokenValidationParameters = new TokenValidationParameters
                     {

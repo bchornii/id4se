@@ -5,31 +5,36 @@ using Newtonsoft.Json.Linq;
 
 namespace ImageGallery.Client
 {
-    public class RoleClaimAction : ClaimAction
+    public class CustomClaimAction : ClaimAction
     {
-        public RoleClaimAction() 
-            : base("role", ClaimValueTypes.String) {}
+        private readonly string _claimType;
+
+        public CustomClaimAction(string claimType, string valueType)
+            : base(claimType, valueType)
+        {
+            _claimType = claimType;
+        }
 
         public override void Run(JObject userData, ClaimsIdentity identity, string issuer)
         {
-            var tokens = userData.SelectTokens("role");
-            var roles = new List<string>();
+            var tokens = userData.SelectTokens(_claimType);
+            var claimValues = new List<string>();
 
             foreach (var token in tokens)
             {
                 if (token is JArray)
                 {
                     var jarr = token as JArray;
-                    roles.AddRange(jarr.Values<string>());
+                    claimValues.AddRange(jarr.Values<string>());
                 }
                 else
                 {
-                    roles.AddRange(new[]{token.Value<string>()});
+                    claimValues.AddRange(new[]{token.Value<string>()});
                 }
 
-                foreach (var role in roles)
+                foreach (var role in claimValues)
                 {
-                    var claim = new Claim("role", role, ValueType, issuer);
+                    var claim = new Claim(_claimType, role, ValueType, issuer);
                     if (!identity.HasClaim(c => c.Subject == claim.Subject && c.Value == claim.Value))
                     {
                         identity.AddClaim(claim);

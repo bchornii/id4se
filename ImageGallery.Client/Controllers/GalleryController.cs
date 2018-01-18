@@ -194,7 +194,8 @@ namespace ImageGallery.Client.Controllers
             await HttpContext.SignOutAsync("oidc");      // logout at IDP level
         }
 
-        [Authorize(Roles = "PayingUser")]
+        //[Authorize(Roles = "PayingUser")]
+        [Authorize(Policy = "CanOrderFrame")]
         public async Task<IActionResult> OrderFrame()
         {
             var accessToken = await HttpContext
