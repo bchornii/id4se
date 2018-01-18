@@ -23,7 +23,9 @@ namespace IDP
                         new Claim("given_name", "Frank"),
                         new Claim("family_name", "Underwood"),
                         new Claim("address", "1, Main Road"),
-                        new Claim("role", "FreeUser")
+                        new Claim("role", "FreeUser"),
+                        new Claim("subsriptionlevel", "FreeUser"),
+                        new Claim("country", "nl")
                     }
                 },
 
@@ -39,7 +41,9 @@ namespace IDP
                         new Claim("family_name", "Underwood"),
                         new Claim("address", "2, Big Street"),
                         new Claim("role", "PayingUser"),
-                        new Claim("role", "Admin")
+                        new Claim("role", "Admin"),
+                        new Claim("subsriptionlevel", "PayingUser"),
+                        new Claim("country", "be")
                     }
                 }
             };
@@ -54,7 +58,16 @@ namespace IDP
                 new IdentityResources.Address(),
 
                 // Add new resource for role as far as this is not standard
-                new IdentityResource("roles", "Your role(s)", new List<string>{"role"})
+                new IdentityResource("roles", "Your role(s)", new List<string>{"role"}),
+
+                // Add county identity resourse - when requested country claim will be included
+                new IdentityResource("country", "The country you're living in.",
+                    new List<string>{"country"}),
+
+                // Add subsriptionlevel identity resourse - when requested subsriptionlevel
+                // will be included
+                new IdentityResource("subsriptionlevel", "Your subscription level.",
+                    new List<string>{"subsriptionlevel"})
             };
         }
 
@@ -94,7 +107,9 @@ namespace IDP
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Address,
                         "roles",
-                        "imagegalleryapi"
+                        "imagegalleryapi",
+                        "country",
+                        "subsriptionlevel"
                     }
                 }
             };
