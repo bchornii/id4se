@@ -42,15 +42,10 @@ namespace ImageGallery.API.Controllers
             return Ok(imagesToReturn);
         }
 
-        [HttpGet("{id}", Name = "GetImage")]
+        [Authorize(Policy = "MustOwnImage")]
+        [HttpGet("{id}", Name = "GetImage")]        
         public IActionResult GetImage(Guid id)
         {
-            var ownerId = User.GetOwnerId();
-            if (!_galleryRepository.IsOwner(id, ownerId))
-            {
-                return StatusCode((int) HttpStatusCode.Forbidden);
-            }
-
             var imageFromRepo = _galleryRepository.GetImage(id);
 
             if (imageFromRepo == null)
@@ -119,6 +114,7 @@ namespace ImageGallery.API.Controllers
                 imageToReturn);
         }
 
+        [Authorize(Policy = "MustOwnImage")]
         [HttpDelete("{id}")]
         public IActionResult DeleteImage(Guid id)
         {
@@ -139,6 +135,7 @@ namespace ImageGallery.API.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = "MustOwnImage")]
         [HttpPut("{id}")]
         public IActionResult UpdateImage(Guid id, 
             [FromBody] ImageForUpdate imageForUpdate)

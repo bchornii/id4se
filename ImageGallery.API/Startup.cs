@@ -1,5 +1,7 @@
 ﻿using ImageGallery.API.Entities;
+using ImageGallery.API.Infrastructure.Authorization;
 using ImageGallery.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -27,6 +29,15 @@ namespace ImageGallery.API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("MustOwnImage", policyBuilder =>
+                {
+                    policyBuilder.RequireAuthenticatedUser();
+                    policyBuilder.AddRequirements(new MustOwnImageRequirement());
+                });
+            });
+
             services.AddAuthentication("Bearer")
                 .AddIdentityServerAuthentication(options =>
                 {
@@ -44,8 +55,11 @@ namespace ImageGallery.API
             var connectionString = Configuration["connectionStrings:imageGalleryDBConnectionString"];
             services.AddDbContext<GalleryContext>(o => o.UseSqlServer(connectionString));
 
+            // register authorization handlers
+            services.AddScoped<IAuthorizationHandler, MustOwnImageHandler>();
+
             // register the repository
-            services.AddScoped<IGalleryRepository, GalleryRepository>();
+            services.AddScoped<IGalleryRepository, GalleryRepository>();            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
