@@ -24,7 +24,7 @@ namespace IDP
                         new Claim("family_name", "Underwood"),
                         new Claim("address", "1, Main Road"),
                         new Claim("role", "FreeUser"),
-                        new Claim("subsriptionlevel", "FreeUser"),
+                        new Claim("subscriptionlevel", "FreeUser"),
                         new Claim("country", "nl")
                     }
                 },
@@ -42,7 +42,7 @@ namespace IDP
                         new Claim("address", "2, Big Street"),
                         new Claim("role", "PayingUser"),
                         new Claim("role", "Admin"),
-                        new Claim("subsriptionlevel", "PayingUser"),
+                        new Claim("subscriptionlevel", "PayingUser"),
                         new Claim("country", "be")
                     }
                 }
@@ -64,10 +64,10 @@ namespace IDP
                 new IdentityResource("country", "The country you're living in.",
                     new List<string>{"country"}),
 
-                // Add subsriptionlevel identity resourse - when requested subsriptionlevel
+                // Add subscriptionlevel identity resourse - when requested subscriptionlevel
                 // will be included
-                new IdentityResource("subsriptionlevel", "Your subscription level.",
-                    new List<string>{"subsriptionlevel"})
+                new IdentityResource("subscriptionlevel", "Your subscription level.",
+                    new List<string>{"subscriptionlevel"})
             };
         }
 
@@ -109,7 +109,7 @@ namespace IDP
                         "roles",
                         "imagegalleryapi",
                         "country",
-                        "subsriptionlevel"
+                        "subscriptionlevel"
                     }
                 }
             };
