@@ -72,6 +72,7 @@ namespace ImageGallery.Client
                     options.Scope.Add("imagegalleryapi");                   
                     options.Scope.Add("subscriptionlevel");  // will be returned from /userinfo
                     options.Scope.Add("country");           // will be returned from /userinfo
+                    options.Scope.Add("offline_access");     // middleware will get an refresh token and save it to use it later on
 
                     // add claims from json user data received from /useinfo endpoint
                     options.ClaimActions.Add(new CustomClaimAction("role", ClaimValueTypes.String));

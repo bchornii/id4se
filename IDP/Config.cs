@@ -95,6 +95,21 @@ namespace IDP
                         new Secret("secret".Sha256())
                     },
 
+                    // IdentityTokenLifetime = 300,
+                    // AuthorizationCodeLifetime = 300,
+                    AccessTokenLifetime = 120,  // api validation contains 5min because of delay for sync
+                    // AbsoluteRefreshTokenLifetime = 2592000, // default is 30 days
+
+                    // RefreshTokenExpiration = TokenExpiration.Sliding,
+                    // SlidingRefreshTokenLifetime = 1296000, // default 15 days
+
+                    // to refresh access token claims on refresh - this is useful
+                    // for cases when user claims changes - without this setup changes will be
+                    // reflected after refresh token expires - 30 days by default
+                    UpdateAccessTokenClaimsOnRefresh = true,
+
+                    AllowOfflineAccess = true,
+
                     AllowedGrantTypes = GrantTypes.Hybrid,
 
                     RedirectUris = { "https://localhost:44318/signin-oidc" },
