@@ -45,6 +45,7 @@ namespace ImageGallery.API
                     options.RequireHttpsMetadata = true;
                     options.ApiName = "imagegalleryapi";    // middleware check for this value
                                                             // in access_token
+                    options.ApiSecret = "apisecret";
                 });
 
             services.AddMvc();

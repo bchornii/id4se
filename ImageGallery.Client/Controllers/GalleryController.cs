@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.IO;
 using System.Net;
 using System.Net.Http.Headers;
+using IdentityModel.Client;
 using ImageGallery.Client.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -190,6 +191,46 @@ namespace ImageGallery.Client.Controllers
 
         public async Task Logout()
         {
+            // get IDP metadata
+            var discoveryClient = new DiscoveryClient("https://localhost:44332/");
+            var metaData = await discoveryClient.GetAsync();
+
+            // create token revocation client
+            var revocationClient = new TokenRevocationClient(metaData.RevocationEndpoint,
+                "imagegalleryclient", "secret");
+
+            // get access token to revoke
+            var accessToken = await HttpContext
+                .GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+
+            if (!string.IsNullOrWhiteSpace(accessToken))
+            {
+                var revokeAccessTokenResponse = await revocationClient
+                    .RevokeAccessTokenAsync(accessToken);
+
+                if (revokeAccessTokenResponse.IsError)
+                {
+                    throw new Exception("Problem occured while revoking access token.",
+                        revokeAccessTokenResponse.Exception);
+                }
+            }
+
+            // revoke refresh token
+            var refreshToken = await HttpContext
+                .GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
+
+            if (!string.IsNullOrWhiteSpace(refreshToken))
+            {
+                var revokeRefreshTokenResponse = await revocationClient
+                    .RevokeRefreshTokenAsync(refreshToken);
+
+                if (revokeRefreshTokenResponse.IsError)
+                {
+                    throw new Exception("Problem occured while revoking refresh token.",
+                        revokeRefreshTokenResponse.Exception);
+                }
+            }
+
             await HttpContext.SignOutAsync("Cookie");    // logout at client app level
             await HttpContext.SignOutAsync("oidc");      // logout at IDP level
         }

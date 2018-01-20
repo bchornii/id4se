@@ -79,6 +79,9 @@ namespace IDP
                     new List<string>{"role"})   // add list of claims included when requesting 
                                                 // imagegalleryapi scope
                                                 // claims will be included in access_token
+                    {
+                        ApiSecrets = { new Secret("apisecret".Sha256()) }
+                    }
             };
         }
 
@@ -94,6 +97,8 @@ namespace IDP
                     {
                         new Secret("secret".Sha256())
                     },
+
+                    AccessTokenType = AccessTokenType.Reference,
 
                     // IdentityTokenLifetime = 300,
                     // AuthorizationCodeLifetime = 300,
