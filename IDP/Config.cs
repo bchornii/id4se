@@ -98,6 +98,8 @@ namespace IDP
                         new Secret("secret".Sha256())
                     },
 
+                    RequireConsent = false,
+
                     AccessTokenType = AccessTokenType.Reference,
 
                     // IdentityTokenLifetime = 300,
