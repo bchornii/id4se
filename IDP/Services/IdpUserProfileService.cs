@@ -8,11 +8,11 @@ using IDP.Repositories;
 
 namespace IDP.Services
 {
-    public class IdpUserProviderService : IProfileService
+    public class IdpUserProfileService : IProfileService
     {
         private readonly IIdpUserRepository _idpUserRepository;
 
-        public IdpUserProviderService(IIdpUserRepository idpUserRepository)
+        public IdpUserProfileService(IIdpUserRepository idpUserRepository)
         {
             _idpUserRepository = idpUserRepository;
         }
