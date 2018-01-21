@@ -8,7 +8,7 @@ namespace IDP.Infrastructure
     {
         public static IIdentityServerBuilder AddIdpUserStore(this IIdentityServerBuilder identityServerBuilder)
         {
-            identityServerBuilder.Services.AddScoped<IIdpUserRepository, IdpUserRepository>();
+            identityServerBuilder.Services.AddSingleton<IIdpUserRepository, IdpUserRepository>();      //register user store
             identityServerBuilder.AddProfileService<IdpUserProviderService>();
             return identityServerBuilder;
         }

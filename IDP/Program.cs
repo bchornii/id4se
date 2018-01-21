@@ -1,4 +1,5 @@
 ﻿using System;
+using IdentityServer4.EntityFramework.DbContexts;
 using IDP.Entities;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -20,9 +21,19 @@ namespace IDP
 
                 try
                 {
-                    var db = services.GetRequiredService<IdpUserContext>();
-                    db.Database.Migrate();
-                    db.EnsureSeedDataForContext();
+                    // migrate and seed IDP database (users, claims, logins)
+                    var idpDb = services.GetRequiredService<IdpUserContext>();
+                    idpDb.Database.Migrate();
+                    idpDb.EnsureSeedDataForContext();
+
+                    // migrate and seed configuration database (identity resources,api resources, clients)
+                    var configDb = services.GetRequiredService<ConfigurationDbContext>();
+                    configDb.Database.Migrate();
+                    configDb.EnsureSeedDataForContext();
+
+                    // migrate persisted grant database (tokens)
+                    var persistedDb = services.GetRequiredService<PersistedGrantDbContext>();
+                    persistedDb.Database.Migrate();
                 }
                 catch (Exception ex)
                 {

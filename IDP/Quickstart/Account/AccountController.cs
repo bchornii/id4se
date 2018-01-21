@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authentication;
 using IdentityServer4.Events;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
+using IDP.Repositories;
 
 namespace IdentityServer4.Quickstart.UI
 {
@@ -34,22 +35,23 @@ namespace IdentityServer4.Quickstart.UI
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
+        private readonly IIdpUserRepository _idpUserRepository;
 
         public AccountController(
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
             IEventService events,
-            TestUserStore users = null)
+            IIdpUserRepository idpUserRepository)
         {
             // if the TestUserStore is not in DI, then we'll just use the global users collection
             // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
-            _users = users ?? new TestUserStore(TestUsers.Users);
+            _idpUserRepository = idpUserRepository;
 
             _interaction = interaction;
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
-            _events = events;
+            _events = events;            
         }
 
         /// <summary>
@@ -101,9 +103,9 @@ namespace IdentityServer4.Quickstart.UI
             if (ModelState.IsValid)
             {
                 // validate username/password against in-memory store
-                if (_users.ValidateCredentials(model.Username, model.Password))
+                if (_idpUserRepository.AreUserCredentialsValid(model.Username, model.Password))
                 {
-                    var user = _users.FindByUsername(model.Username);
+                    var user = _idpUserRepository.GetUserByUsername(model.Username);
                     await _events.RaiseAsync(new UserLoginSuccessEvent(user.Username, user.SubjectId, user.Username));
 
                     // only set explicit expiration here if user chooses "remember me". 
