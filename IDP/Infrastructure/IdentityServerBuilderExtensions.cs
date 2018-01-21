@@ -8,7 +8,10 @@ namespace IDP.Infrastructure
     {
         public static IIdentityServerBuilder AddIdpUserStore(this IIdentityServerBuilder identityServerBuilder)
         {
-            identityServerBuilder.Services.AddSingleton<IIdpUserRepository, IdpUserRepository>();      //register user store
+            //register user store
+            identityServerBuilder.Services.AddSingleton<IIdpUserRepository, IdpUserRepository>();
+
+            // IdpUserProfileService allows connecting custom user store to get profile info like claims
             identityServerBuilder.AddProfileService<IdpUserProfileService>();
             return identityServerBuilder;
         }
