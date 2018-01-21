@@ -239,16 +239,18 @@ namespace ImageGallery.Client.Controllers
         [Authorize(Policy = "CanOrderFrame")]
         public async Task<IActionResult> OrderFrame()
         {
+            var dicoveryClient = new DiscoveryClient("https://localhost:44332/");
+            var metadata = await dicoveryClient.GetAsync();
+
+            var userInfoClient = new UserInfoClient(metadata.UserInfoEndpoint);
+
             var accessToken = await HttpContext
                 .GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
 
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var response = await client.GetAsync("https://localhost:44332/connect/userinfo");
-            var result = await response.Content.ReadAsStringAsync();
-            var address = JObject.Parse(result)["address"];
+            var response = await userInfoClient.GetAsync(accessToken);
+            var address = response.Claims.FirstOrDefault(c => c.Type == "address")?.Value;
 
-            return View(new OrderFrameViewModel(address.ToString()));
+            return View(new OrderFrameViewModel(address));
         }
 
         public async Task WriteOutIdentityInformation()
