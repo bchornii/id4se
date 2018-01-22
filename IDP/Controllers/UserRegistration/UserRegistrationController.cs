@@ -6,7 +6,7 @@ using IDP.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IDP.Quickstart.UserRegistration
+namespace IDP.Controllers.UserRegistration
 {
     public class UserRegistrationController : Controller
     {

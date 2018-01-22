@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace IDP.Quickstart.UserRegistration
+namespace IDP.Controllers.UserRegistration
 {
     public class RegisterUserViewModel
     {
