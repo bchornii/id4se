@@ -89,6 +89,7 @@ namespace IDP
         {
             return new List<Client>
             {
+                // Mvc client
                 new Client
                 {
                     ClientName = "Image Gallery",
@@ -132,6 +133,35 @@ namespace IDP
                         "imagegalleryapi",
                         "country",
                         "subscriptionlevel"
+                    }
+                },
+
+                // Spa client
+                new Client
+                {
+                    ClientId = "imagegalleryspa",
+                    ClientName = "Image Gallery SPA",
+
+                    RequireConsent = false,
+
+                    // If the token leaves the company infrastructure (e.g. to a browser or a mobile device), 
+                    // use reference tokens to be in complete control over lifetime. 
+                    // If the token is used internally only, self contained tokens are fine.
+                    AccessTokenType = AccessTokenType.Reference,
+
+                    AllowedGrantTypes = GrantTypes.Implicit,
+
+                    AllowAccessTokensViaBrowser = true,
+
+                    RedirectUris = { "https://localhost:44347/callback.html" },
+                    PostLogoutRedirectUris = { "https://localhost:44347/index.html" },
+                    AllowedCorsOrigins = { "https://localhost:44347" },
+
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "imagegalleryapi"
                     }
                 }
             };

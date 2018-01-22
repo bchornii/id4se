@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using ImageGallery.API.Infrastructure;
 
 namespace ImageGallery.API.Controllers
