@@ -74,10 +74,10 @@ namespace IDP
         public static IEnumerable<ApiResource> GetApiResources()
         {
             return new List<ApiResource>
-            {
+            {                
                 new ApiResource("imagegalleryapi", "Image Gallery API",
-                    new List<string>{"role"})   // add list of claims included when requesting 
-                                                // imagegalleryapi scope
+                    new List<string>{"role"})   // list of accociated user claims that should be included
+                                                // when this resource is requested
                                                 // claims will be included in access_token
                     {
                         ApiSecrets = { new Secret("apisecret".Sha256()) }
@@ -98,7 +98,7 @@ namespace IDP
                         new Secret("secret".Sha256())
                     },
 
-                    RequireConsent = false,
+                    RequireConsent = true,
 
                     AccessTokenType = AccessTokenType.Reference,
 
