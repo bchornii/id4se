@@ -48,6 +48,17 @@ namespace ImageGallery.API
                     options.ApiSecret = "apisecret";
                 });
 
+            services.AddCors(options =>
+            {
+                // this defines a CORS policy called "default"
+                options.AddPolicy("default", policy =>
+                {
+                    policy.WithOrigins("https://localhost:44347")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+
             services.AddMvc();
 
             // register the DbContext on the container, getting the connection string from
@@ -115,6 +126,8 @@ namespace ImageGallery.API
 
             // seed the DB with data
             galleryContext.EnsureSeedDataForContext();
+
+            app.UseCors("default");
 
             app.UseAuthentication();
 
